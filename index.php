@@ -9,6 +9,22 @@ require_once('config.php');
 
 require_once('db.php');
 
+if( $_SERVER['REQUEST_METHOD'] == "POST"){
+  
+  $uid = uniqid();
+
+  $comment = [
+     
+     "_id"           => $uid,
+     "name"       => $_POST["name"],
+     "comment"    => $_POST["comment"],
+     "created_at" => date("Y-m-d H:i:s")
+  ];
+
+  $bucket->insert($uid, $comment);
+
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -45,20 +61,6 @@ require_once('db.php');
 
 		<div >
             <h4 class="text-center">Listing comments</h4> 
-           
-           <?php 
-
-             foreach( $result->rows as $result ): ?>
-			  
-
-	           <div class="card">
-
-	              By: <?= $result->name ?>, On: <?= $result->created_at ?> <br><br>
-
-	              <?= $result->comment ?>
-	           </div> <br>
-			 
-		   <?php endforeach; ?>
 
 
 		</div>
