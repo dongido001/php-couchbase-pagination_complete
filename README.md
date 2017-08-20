@@ -7,7 +7,10 @@
 ## How to install
 
 - clone the project
-    `$ clone ...`
+    `$ clone git@github.com:dongido001/php-couch-db-pagination.git`
 
-Then follow the tutorial here LINK,,,
-that's all
+Then follow the tutorial here LINK(COMMING SOON) <br />
+
+That's all. <br />
+
+You can find the complete file here LINK COMMING SOON.
