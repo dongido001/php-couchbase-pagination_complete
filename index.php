@@ -25,6 +25,28 @@ if( $_SERVER['REQUEST_METHOD'] == "POST"){
 
 }
 
+   
+ //Select all contentin our query 
+
+ $no_per_page = 4; //This is the number of Items we want per page
+
+  $current_page = (isset($_GET['page_id'])) ? $_GET['page_id'] : 1; //Gets the current page, if not set, default to page 1
+
+ $skip = ($current_page - 1) * $no_per_page; //Gets the total number of page we want to skip when making request. When we are on page one, We don't need to skip any Item.
+
+ $query = \Couchbase\N1qlQuery::fromString("SELECT * FROM `commenting`  LIMIT $no_per_page OFFSET $skip");
+
+ $result = $bucket->query($query);
+
+ //count total number of result in the database
+
+ $total = $bucket->query(\Couchbase\N1qlQuery::fromString("SELECT COUNT(comment) total FROM `commenting`"));
+
+ $total = $total->rows[0]->total;
+ 
+ $number_of_pages = ceil( $total/$no_per_page ); //calculate number of pages
+
+
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +63,7 @@ if( $_SERVER['REQUEST_METHOD'] == "POST"){
 
   <div class="container">
      
-     <div class="container" style="margin-left: auto; margin-right: auto; width: 400px;">
+     <div class="container" style="margin-left: auto; margin-right: auto; width: 700px;">
         <h4 class="text-center">Add a comment</h4> 
 
 		<form action="" method="POST">
@@ -60,12 +82,32 @@ if( $_SERVER['REQUEST_METHOD'] == "POST"){
 
 
 		<div >
-            <h4 class="text-center">Listing comments</h4> 
+      
+      <h4 class="text-center">Listing comments</h4> 
+           
+      <?php foreach( $result->rows as $comment ):?>
+        <div> 
+                  
+          <div class="alert alert-success" role="alert">
+            <h5 class="alert-heading"> By: <?=$comment->commenting->name?>, Created At: <?=$comment->commenting->created_at?> </h5><br>
+            <p> <?=$comment->commenting->comment?></p>
+            <hr>
+          </div>
 
-
+       </div>
+     <?php endforeach; ?>
+               
 		</div>
 
 		<div id="pagination">
+      
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+        <?php for($i = 1; $i <= $number_of_pages; $i++): ?>
+          <li class="page-item"><a class="page-link" href="?page_id=<?=$i?>"><?=$i?></a></li>
+        <?php endfor; ?>
+        </ul>
+      </nav>
 
 		</div>
 
